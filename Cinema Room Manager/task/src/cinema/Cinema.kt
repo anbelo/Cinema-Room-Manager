@@ -1,18 +1,20 @@
 package cinema
 
-const val ROW_MIN = 1
-const val ROW_MAX = 7
-const val COL_MIN = 1
-const val COL_MAX = 8
+const val PRICE = 10
+const val DISCOUNT_PRICE = 8
 
 fun main() {
-    println("Cinema:")
-    println((COL_MIN..COL_MAX).joinToString(" ", "  "))
-    for (row in ROW_MIN..ROW_MAX) {
-        print("$row ")
-        for (col in COL_MIN until COL_MAX) {
-            print("S ")
-        }
-        println("S")
+    println("Enter the number of rows:")
+    val rows = readln().toInt()
+    println("Enter the number of seats in each row:")
+    val cols = readln().toInt()
+    val totalIncome = if (rows * cols <= 60) {
+        rows * cols * PRICE
+    } else {
+        (rows / 2) * cols * PRICE + (rows - (rows / 2)) * cols * DISCOUNT_PRICE
     }
+    println("""
+        Total income:
+        $$totalIncome
+    """.trimIndent())
 }
