@@ -1,44 +1,69 @@
 package cinema
 
-const val MIN_ROWS = 1
-const val MIN_SEATS = 1
-
-const val PRICE = 10
-const val DISCOUNT_PRICE = 8
-
 fun main() {
     println("Enter the number of rows:")
     val rows = readln().toInt()
     println("Enter the number of seats in each row:")
     val seats = readln().toInt()
-    printCinema(rows, seats)
-
-    println("Enter a row number:")
-    val row = readln().toInt()
-    println("Enter a seat number in that row:")
-    val seat = readln().toInt()
-
-    val ticketPrice = if (rows * seats <= 60) {
-        PRICE
-    } else {
-        if (row <= rows / 2) PRICE else DISCOUNT_PRICE
-    }
-
-    println()
-    println("Ticket price: \$$ticketPrice")
-    printCinema(rows, seats, listOf(Pair(row, seat)))
+    val cinema = Cinema(rows, seats)
+    do {
+        when (cinema.menu()) {
+            1 -> cinema.showSeats()
+            2 -> cinema.buyTicket()
+            0 -> return
+            else -> println("Unknown action")
+        }
+    } while (true)
 }
 
-fun printCinema(rows: Int, seats: Int, booked: List<Pair<Int, Int>> = emptyList()) {
-    println()
-    println("Cinema:")
-    println((MIN_SEATS..seats).joinToString(" ", "  "))
-    for (row in MIN_ROWS..rows) {
-        print("$row ")
-        for (seat in MIN_SEATS until seats) {
-            print(if (Pair(row, seat) in booked) "B " else "S ")
-        }
-        println("S")
+class Cinema(private val rows: Int, private val seats: Int) {
+
+    private val price = 10
+    private val discountPrice = 8
+    private val minSeats = 1
+    private val theatre = List(rows) { MutableList(seats) { 'S' } }
+
+    fun menu(): Int {
+        println("""
+            
+            1. Show the seats
+            2. Buy a ticket
+            0. Exit
+        """.trimIndent())
+        return readln().toInt()
     }
-    println()
+
+    fun showSeats() {
+        println("""
+            
+            Cinema:
+        """.trimIndent())
+        println((minSeats..seats).joinToString(" ", "  "))
+        for (rowIndex in theatre.indices) {
+            print("${rowIndex + 1} ")
+            for (seat in theatre[rowIndex]) {
+                print("$seat ")
+            }
+            println()
+        }
+    }
+
+    fun buyTicket() {
+        println("""
+            
+            Enter a row number:
+        """.trimIndent())
+        val row = readln().toInt()
+        println("Enter a seat number in that row:")
+        val seat = readln().toInt()
+
+        val ticketPrice = if (rows * seats <= 60) {
+            price
+        } else {
+            if (row <= rows / 2) price else discountPrice
+        }
+        println("Ticket price: \$$ticketPrice")
+        theatre[row - 1][seat - 1] = 'B'
+    }
+
 }
